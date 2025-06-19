@@ -69,7 +69,7 @@
       padding: 0 20px;
     }
 
-    #easterEggImage {
+    #easterEggImage, #easterEggVideo {
       display: none;
       margin-top: 20px;
       width: 500px;
@@ -109,6 +109,12 @@
   </div>
   <div id="mensagem"></div>
   <img id="easterEggImage" src="https://i.imgur.com/BCTaebf.png" alt="Colossal Titans">
+  
+  <video id="easterEggVideo" controls style="display: none; max-width: 90%; width: 500px;">
+    <source src="URL_DO_SEU_VIDEO.mp4" type="video/mp4">
+    Seu navegador não suporta o elemento de vídeo.
+  </video>
+  
   <button id="easterEggBtn">easter egg</button>
 
   <script>
@@ -117,6 +123,7 @@
     const mensagem = document.getElementById('mensagem');
     const img = document.getElementById('easterEggImage');
     const easterEggBtn = document.getElementById('easterEggBtn');
+    const easterEggVideo = document.getElementById('easterEggVideo'); // Pega o elemento de vídeo
     let clickCount = 0;
 
     const positions = [
@@ -150,8 +157,11 @@
       }
     });
 
+    // LÓGICA DO BOTÃO DO EASTER EGG ATUALIZADA
     easterEggBtn.addEventListener('click', () => {
-      alert('Feliz aniversário, Aninha! Você achou o easter egg 🐣');
+      easterEggVideo.style.display = 'block'; // Mostra o vídeo
+      easterEggVideo.play(); // Toca o vídeo
+      easterEggBtn.style.display = 'none'; // Esconde o botão do easter egg
     });
   </script>
 </body>
