@@ -9,11 +9,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       height: 100vh;
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       position: relative;
+      padding-top: 40px;
     }
 
     h1 {
@@ -21,8 +22,6 @@
       color: #ff1493;
       text-shadow: 2px 2px #ff69b4;
       margin-bottom: 40px;
-      position: absolute;
-      top: 40px;
     }
 
     .buttons {
@@ -31,7 +30,7 @@
       justify-content: center;
       align-items: center;
       gap: 20px;
-      margin-top: 100px;
+      margin-bottom: 30px;
     }
 
     button {
@@ -143,15 +142,7 @@
     });
 
     btnObrigada.addEventListener('click', () => {
-      if (btnObrigada.textContent === 'CLICA NESSA PORRA') {
-        mensagem.innerHTML = "<p>Parabéns, Aninha! Que seu dia seja repleto de amor, sorrisos sinceros e momentos inesquecíveis. Você é uma pessoa incrível e merece o mundo! Feliz aniversário! 🎉💖 COMPRA UM PC PRA GENTE JOGAR ARAM DAWG</p>";
-        img.style.display = 'block';
-        easterEggBtn.style.display = 'block';
-        btnObrigada.style.display = 'none';
-      } else {
-        mensagem.innerHTML = "<p>Parabéns, Aninha! Que seu dia seja repleto de amor, sorrisos sinceros e momentos inesquecíveis. Você é uma pessoa incrível e merece o mundo! Feliz aniversário! 🎉💖</p>";
-      }
-    });
+      mensagem.innerHTML = "<p>Parabéns, Aninha! Que seu dia seja repleto de amor, sorrisos sinceros e momentos inesquecíveis. Você é uma pessoa incrível e merece o mundo! Feliz aniversário! 🎉💖</p>";
       if (btnObrigada.textContent === 'CLICA NESSA PORRA') {
         img.style.display = 'block';
         easterEggBtn.style.display = 'block';
