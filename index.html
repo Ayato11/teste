@@ -118,10 +118,11 @@
       align-items: center;
     }
 
-    #videoOverlay iframe {
+    /* Estilo para o vídeo preencher a div sem distorcer */
+    #videoOverlay video {
       width: 100%;
       height: 100%;
-      border: none;
+      object-fit: cover; /* ESSENCIAL: Cobre toda a área, cortando o excesso se necessário */
     }
 
     #closeVideoBtn {
@@ -133,7 +134,7 @@
       background: transparent;
       border: none;
       cursor: pointer;
-      z-index: 10001; /* Fica acima do iframe */
+      z-index: 10001; /* Fica acima do vídeo */
     }
     
   </style>
@@ -153,13 +154,11 @@
   <button id="easterEggBtn">easter egg</button>
 
   <div id="videoOverlay">
-    <button id="closeVideoBtn" title="Fechar">&times;</button>
-    <iframe 
-        id="youtubeVideo"
-        src=""
-        allow="autoplay; fullscreen"
-        allowfullscreen>
-    </iframe>
+    <button id="closeVideoBtn" title="Fechar">×</button>
+    <video id="easterEggVideo" loop preload="auto">
+      <source src="https://github.com/Ayato11/teste/blob/a27d361ff361181bc6dd9e9a46150422f9c71163/WhatsApp%20Video%202025-06-19%20at%2010.45.14.mp4" type="video/mp4">
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
   </div>
 
   <script>
@@ -171,7 +170,7 @@
     
     // --- ELEMENTOS DO VÍDEO DO EASTER EGG ---
     const videoOverlay = document.getElementById('videoOverlay');
-    const youtubeVideo = document.getElementById('youtubeVideo');
+    const easterEggVideo = document.getElementById('easterEggVideo'); // Pega o elemento <video>
     const closeVideoBtn = document.getElementById('closeVideoBtn');
     
     let clickCount = 0;
@@ -209,21 +208,16 @@
 
     // --- LÓGICA ATUALIZADA DO BOTÃO DO EASTER EGG ---
     easterEggBtn.addEventListener('click', () => {
-      // ##################################################################
-      // ## TROQUE A URL ABAIXO PELA URL DE "INCORPORAR" DO SEU VÍDEO    ##
-      // ## Adicione "?autoplay=1" no final para tocar automaticamente.    ##
-      // ##################################################################
-      const videoUrl = 'https://youtu.be/U8kq4xpJpf0';
-
-      youtubeVideo.src = videoUrl; // Define a URL do vídeo no iframe
       videoOverlay.style.display = 'flex'; // Mostra o container do vídeo
+      easterEggVideo.play(); // Dá play no vídeo
       easterEggBtn.style.display = 'none'; // Esconde o botão do easter egg
     });
 
     // --- LÓGICA PARA FECHAR O VÍDEO ---
     closeVideoBtn.addEventListener('click', () => {
       videoOverlay.style.display = 'none'; // Esconde o container
-      youtubeVideo.src = ''; // Para o vídeo removendo a URL
+      easterEggVideo.pause(); // Pausa o vídeo
+      easterEggVideo.currentTime = 0; // Volta o vídeo para o início
       easterEggBtn.style.display = 'block'; // Mostra o botão do easter egg novamente
     });
   </script>
