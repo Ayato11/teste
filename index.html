@@ -5,30 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gaviões vs Mancha</title>
   <style>
-    html, body {
+    body {
       margin: 0;
       padding: 0;
-      width: 50%;
-    
-      overflow: hidden;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    body {
-      background: url('gavião.png') no-repeat center center fixed;
-     # background-size: cover;
+    .gallery {
+      display: flex;
+      gap: 10px;
     }
 
-    audio {
-      display: none;
+    .gallery img {
+      width: 300px;
+      height: auto;
+      border: 2px solid white;
     }
   </style>
 </head>
 <body>
+  <div class="gallery">
+    <img src="gavião.png" alt="Imagem 1">
+    <img src="gavião2.jpg" alt="Imagem 2">
+    <img src="dudu.jpg" alt="Imagem 3">
+  </div>
+
   <!-- Música de fundo -->
   <audio autoplay loop>
-    <source src="hino.mp3" type="audio/mpeg">
+    <source src="hino.mp3" type="audio/mp3">
     Seu navegador não suporta o elemento de áudio.
   </audio>
+  <script>
+    // Para garantir a reprodução automática em alguns navegadores
+    document.addEventListener('DOMContentLoaded', () => {
+      const audio = document.querySelector('audio');
+      if (audio) {
+        audio.play().catch(error => {
+          console.warn('Autoplay falhou:', error);
+        });
+      }
+    });
+  </script>
 </body>
 </html>
-
