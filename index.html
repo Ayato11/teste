@@ -2,6 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feliz Aniversário Aninha</title>
   <style>
     body {
@@ -137,7 +138,7 @@
       z-index: 10001; /* Fica acima do vídeo */
     }
     
-    @media (max-width: 600px) {
+  @media (max-width: 600px) {
   h1 {
     font-size: 2em;
   }
@@ -145,6 +146,25 @@
   button {
     padding: 10px 15px;
     font-size: 0.9em;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #mensagem {
+    font-size: 1em;
+  }
+
+  #easterEggImage {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #videoOverlay video {
+    width: 100%;
+    height: auto;
   }
 }
 
