@@ -49,26 +49,18 @@
   </div>
 
   <!-- Música de fundo -->
-  <audio id="bg-music" autoplay loop muted>
+  <audio id="bg-music" autoplay loop>
     <source src="hino.mp3" type="audio/mp3">
     Seu navegador não suporta o elemento de áudio.
   </audio>
 
   <script>
-    // Tenta desbloquear o autoplay removendo o muted após carregamento
     document.addEventListener('DOMContentLoaded', () => {
       const audio = document.getElementById('bg-music');
       if (audio) {
-        audio.muted = false;
-        const playAudio = () => {
-          audio.play().then(() => {
-            document.removeEventListener('click', playAudio);
-          }).catch(() => {
-            // Se falhar, aguarda um clique do usuário
-            document.addEventListener('click', playAudio);
-          });
-        };
-        playAudio();
+        audio.play().catch(error => {
+          console.warn('Autoplay falhou:', error);
+        });
       }
     });
   </script>
