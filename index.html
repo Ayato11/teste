@@ -48,8 +48,25 @@
     <img src="dudu.jpg" alt="Imagem 3">
   </div>
 
-  <!-- Música de fundo -->
-  <iframe src="sertanejo.mp3" allow="autoplay" style="display:none" id="audio"></iframe>
+  <!-- Áudio de fundo com autoplay -->
+  <audio id="bg-music" autoplay loop>
+    <source src="sertanejo.mp3" type="audio/mpeg">
+    Seu navegador não suporta o elemento de áudio.
+  </audio>
 
+  <script>
+    window.addEventListener('load', function () {
+      const audio = document.getElementById('bg-music');
+      const playPromise = audio.play();
+
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Autoplay OK
+        }).catch(error => {
+          console.warn('Autoplay bloqueado.');
+        });
+      }
+    });
+  </script>
 </body>
 </html>
