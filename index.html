@@ -8,12 +8,12 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #000;
+      background-color: #FFF;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-image: url('corinthians-escudo.png');
+      background-image: url('corinthians (2).png');
       background-repeat: repeat;
       background-size: 150px;
     }
@@ -49,20 +49,7 @@
   </div>
 
   <!-- Música de fundo -->
-  <audio id="bg-music" autoplay loop>
-    <source src="sertanejo.mp3" type="audio/mp3">
-    Seu navegador não suporta o elemento de áudio.
-  </audio>
+  <iframe src="sertanejo.mp3" allow="autoplay" style="display:none" id="audio"></iframe>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const audio = document.getElementById('bg-music');
-      if (audio) {
-        audio.play().catch(error => {
-          console.warn('Autoplay falhou:', error);
-        });
-      }
-    });
-  </script>
 </body>
 </html>
