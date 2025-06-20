@@ -8,12 +8,12 @@
     body {
       margin: 0;
       padding: 0;
-      background-color: #FFF;
+      background-color: #000;
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-image: url('corinthians (2).png');
+      background-image: url('corinthians-escudo.png');
       background-repeat: repeat;
       background-size: 150px;
     }
@@ -49,19 +49,26 @@
   </div>
 
   <!-- Música de fundo -->
-  <audio autoplay loop>
+  <audio id="bg-music" autoplay loop muted>
     <source src="hino.mp3" type="audio/mp3">
     Seu navegador não suporta o elemento de áudio.
   </audio>
 
   <script>
-    // Garantir reprodução automática em navegadores modernos
+    // Tenta desbloquear o autoplay removendo o muted após carregamento
     document.addEventListener('DOMContentLoaded', () => {
-      const audio = document.querySelector('audio');
+      const audio = document.getElementById('bg-music');
       if (audio) {
-        audio.play().catch(error => {
-          console.warn('Autoplay falhou:', error);
-        });
+        audio.muted = false;
+        const playAudio = () => {
+          audio.play().then(() => {
+            document.removeEventListener('click', playAudio);
+          }).catch(() => {
+            // Se falhar, aguarda um clique do usuário
+            document.addEventListener('click', playAudio);
+          });
+        };
+        playAudio();
       }
     });
   </script>
