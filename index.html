@@ -9,23 +9,31 @@
       margin: 0;
       padding: 0;
       background-color: #000;
+      min-height: 100vh;
       display: flex;
-      #justify-content: center;
-      #align-items: center;
-      height: 100vh;
+      justify-content: center;
+      align-items: center;
     }
 
     .gallery {
       display: flex;
-      gap: 0px;
-      background-size: cover;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
     }
 
     .gallery img {
-      width: 610px;
+      width: 100%;
+      max-width: 400px;
       height: auto;
       border: 0px solid white;
-    
+    }
+
+    @media (min-width: 768px) {
+      .gallery {
+        flex-direction: row;
+      }
     }
   </style>
 </head>
@@ -41,8 +49,9 @@
     <source src="hino.mp3" type="audio/mp3">
     Seu navegador não suporta o elemento de áudio.
   </audio>
+
   <script>
-    // Para garantir a reprodução automática em alguns navegadores
+    // Garantir reprodução automática em navegadores modernos
     document.addEventListener('DOMContentLoaded', () => {
       const audio = document.querySelector('audio');
       if (audio) {
