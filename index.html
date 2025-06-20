@@ -50,22 +50,24 @@
   </div>
 
   <audio id="bg-music" autoplay loop>
-    <source src="sertanejo.mp3" type="audio/mpeg">
+    <source src="hino.mp3" type="audio/mpeg">
     Seu navegador não suporta o elemento de áudio.
   </audio>
 
   <script>
     window.addEventListener('load', () => {
       const audio = document.getElementById('bg-music');
-      const playPromise = audio.play();
+      audio.volume = 1.0;
+      audio.muted = false;
 
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          console.log('Reprodução automática iniciada.');
-        }).catch(error => {
-          console.warn('Reprodução automática bloqueada pelo navegador.');
+      const tryPlay = () => {
+        audio.play().catch(() => {
+          // Tenta novamente após 2 segundos
+          setTimeout(tryPlay, 2000);
         });
-      }
+      };
+
+      tryPlay();
     });
   </script>
 </body>
