@@ -1,81 +1,264 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gaviões vs Mancha</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #FFF;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-image: url('corinthians (2).png');
-      background-repeat: repeat;
-      background-size: 150px;
-    }
-
-    .gallery {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      align-items: center;
-      padding: 10px;
-      z-index: 1;
-    }
-
-    .gallery img {
-      width: 100%;
-      max-width: 400px;
-      height: auto;
-      border: 0px solid white;
-    }
-
-    audio {
-      display: none; /* Player invisível */
-    }
-
-    @media (min-width: 768px) {
-      .gallery {
-        flex-direction: row;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globo 3D com Busca de Países</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; font-family: sans-serif; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            max-width: 200px;
+        }
+        #searchBox {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            gap: 5px;
+        }
+        #searchInput {
+            background-color: #333;
+            border: 1px solid #555;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+        #searchButton {
+            background-color: #4a90e2;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #searchButton:hover {
+            background-color: #357abd;
+        }
+        #message {
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-  <div class="gallery">
-    <img src="gavião2.jpg" alt="Imagem 1">
-    <img src="gavião.png" alt="Imagem 2">
-    <img src="dudu.jpg" alt="Imagem 3">
-  </div>
+    <div id="info">
+        <p>Arraste para girar. Use a roda do mouse para dar zoom.</p>
+    </div>
 
-  <audio id="bg-music" autoplay loop>
-    <source src="sertanejo.mp3" type="audio/mpeg">
-    Seu navegador não suporta o elemento de áudio.
-  </audio>
+    <div id="searchBox">
+        <input type="text" id="searchInput" placeholder="Digite um país (em inglês)...">
+        <button id="searchButton">Buscar</button>
+        <div id="message"></div>
+    </div>
 
-  <script>
-    // Remove o atributo muted e tenta tocar assim que possível
-    const audio = document.getElementById('bg-music');
-    audio.muted = false;
-    audio.volume = 1.0;
+    <canvas id="globeCanvas"></canvas>
 
-    const playAudio = () => {
-      audio.play().then(() => {
-        console.log('Autoplay bem-sucedido');
-      }).catch(err => {
-        console.warn('Autoplay falhou, aguardando interação');
-        document.addEventListener('click', () => {
-          audio.play();
-        }, { once: true });
-      });
-    };
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-    window.addEventListener('load', playAudio);
-  </script>
+    <script>
+        // --- Configuração Inicial ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 15;
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('#globeCanvas'),
+            antialias: true
+        });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // --- Grupo para o Globo ---
+        // Agrupar a Terra e as nuvens permite que girem juntas
+        const globeGroup = new THREE.Group();
+        scene.add(globeGroup);
+
+        // --- Controles ---
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 7;
+        controls.maxDistance = 50;
+        controls.enablePan = false;
+
+        // --- Carregador de Texturas ---
+        const textureLoader = new THREE.TextureLoader();
+
+        // --- Fundo Estrelado ---
+        const starGeometry = new THREE.SphereGeometry(300, 64, 64);
+        const starMaterial = new THREE.MeshBasicMaterial({
+            map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/starry-deep-outer-space-background.jpg'),
+            side: THREE.BackSide
+        });
+        const starfield = new THREE.Mesh(starGeometry, starMaterial);
+        scene.add(starfield);
+
+        // --- Globo Terrestre ---
+        const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg'),
+            specularMap: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_specular.jpg'),
+            specular: new THREE.Color('grey'),
+            emissiveMap: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_lights.png'),
+            emissive: new THREE.Color(0xffffff),
+            emissiveIntensity: 1.0
+        });
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        globeGroup.add(earth);
+
+        // --- Camada de Nuvens ---
+        const cloudGeometry = new THREE.SphereGeometry(5.1, 64, 64);
+        const cloudMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_clouds.png'),
+            transparent: true,
+            opacity: 0.6
+        });
+        const clouds = new THREE.Mesh(cloudGeometry, cloudMaterial);
+        globeGroup.add(clouds);
+
+        // --- Atmosfera ---
+        const atmosphereGeometry = new THREE.SphereGeometry(5.2, 64, 64);
+        const atmosphereMaterial = new THREE.ShaderMaterial({
+            vertexShader: `varying vec3 vertexNormal; void main() { vertexNormal = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+            fragmentShader: `varying vec3 vertexNormal; void main() { float intensity = pow(0.6 - dot(vertexNormal, vec3(0.0, 0.0, 1.0)), 2.0); gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity; }`,
+            blending: THREE.AdditiveBlending,
+            side: THREE.BackSide
+        });
+        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+        scene.add(atmosphere);
+
+        // --- Iluminação ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        scene.add(directionalLight);
+
+        // --- Variáveis de Animação e Busca ---
+        let targetRotation = null; // Objeto {x, y} para a rotação alvo
+        let marker = null; // Armazena o marcador do local
+        const messageEl = document.getElementById('message');
+
+        // --- Funções de Busca e Marcação ---
+
+        /**
+         * Converte coordenadas de Latitude/Longitude para um vetor 3D.
+         */
+        function latLonToVector3(lat, lon, radius) {
+            const phi = (90 - lat) * (Math.PI / 180);
+            const theta = (lon + 180) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            return new THREE.Vector3(x, y, z);
+        }
+
+        /**
+         * Adiciona um marcador no globo na latitude e longitude especificadas.
+         */
+        function addMarker(lat, lon) {
+            if (marker) {
+                globeGroup.remove(marker); // Remove o marcador anterior
+            }
+            const markerGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+            const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            marker = new THREE.Mesh(markerGeometry, markerMaterial);
+            const markerPosition = latLonToVector3(lat, lon, 5.1); // Posição na superfície
+            marker.position.copy(markerPosition);
+            globeGroup.add(marker);
+        }
+
+        /**
+         * Busca o país e inicia a animação.
+         */
+        async function searchCountry() {
+            const countryName = document.getElementById('searchInput').value;
+            if (!countryName) return;
+
+            messageEl.textContent = 'Buscando...';
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${countryName}&format=json&limit=1&accept-language=en`);
+                const data = await response.json();
+
+                if (data && data.length > 0) {
+                    messageEl.textContent = '';
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    
+                    addMarker(lat, lon);
+
+                    // Define a rotação alvo para animar o globo
+                    targetRotation = {
+                        x: (lat * Math.PI / 180),
+                        y: (-lon * Math.PI / 180)
+                    };
+                } else {
+                    messageEl.textContent = 'País não encontrado.';
+                }
+            } catch (error) {
+                console.error("Erro na busca:", error);
+                messageEl.textContent = 'Erro na busca.';
+            }
+        }
+
+        // --- Event Listeners ---
+        document.getElementById('searchButton').addEventListener('click', searchCountry);
+        document.getElementById('searchInput').addEventListener('keyup', (event) => {
+            if (event.key === 'Enter') {
+                searchCountry();
+            }
+        });
+
+        // Para a animação se o usuário interagir com o globo
+        controls.addEventListener('start', () => {
+            targetRotation = null;
+        });
+
+        // --- Responsividade ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Loop de Animação ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animação de rotação
+            if (targetRotation) {
+                // Interpola suavemente para a rotação alvo
+                globeGroup.rotation.x = THREE.MathUtils.lerp(globeGroup.rotation.x, targetRotation.x, 0.05);
+                globeGroup.rotation.y = THREE.MathUtils.lerp(globeGroup.rotation.y, targetRotation.y, 0.05);
+            } else {
+                // Rotação automática padrão
+                globeGroup.rotation.y += 0.0005;
+            }
+
+            // A luz direcional segue a câmera
+            const cameraWorldPosition = new THREE.Vector3();
+            camera.getWorldPosition(cameraWorldPosition);
+            directionalLight.position.copy(cameraWorldPosition);
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
 </body>
 </html>
